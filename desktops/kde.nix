@@ -1,4 +1,10 @@
-# kde.nix — Plasma 6 on Wayland (default)
+# kde.nix — Plasma 6, X11 session default (Wayland still selectable)
+#
+# Why X11 default: Guild Wars 2's launcher uses Win32 layered-window
+# transparency, which XWayland renders poorly. Native X11 makes the
+# launcher render correctly and gives noticeably better in-game frametimes
+# on this user's NVIDIA card. The Wayland session stays available from
+# the gear menu on the SDDM login screen.
 { config, pkgs, ... }:
 {
   system.nixos.label = "KDE-PLASMA-6";
@@ -6,6 +12,10 @@
   imports = [ ./sddm.nix ];
 
   services.desktopManager.plasma6.enable = true;
+
+  # Default SDDM session = Plasma X11. Pick "Plasma (Wayland)" from the
+  # gear menu when you want Wayland (e.g. fractional scaling testing).
+  services.displayManager.defaultSession = "plasmax11";
 
   # Native KDE portal — appended onto the gtk fallback from tray-fix.nix
   xdg.portal.extraPortals = with pkgs; [

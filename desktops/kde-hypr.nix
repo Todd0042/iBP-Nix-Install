@@ -9,6 +9,10 @@
   services.desktopManager.plasma6.enable = true;
   programs.hyprland = { enable = true; xwayland.enable = true; };
 
+  # Default to Plasma X11 (best for GW2). Hyprland and Plasma-Wayland
+  # are still selectable from SDDM's gear menu.
+  services.displayManager.defaultSession = "plasmax11";
+
   xdg.portal.extraPortals = with pkgs; [
     kdePackages.xdg-desktop-portal-kde
     xdg-desktop-portal-hyprland
