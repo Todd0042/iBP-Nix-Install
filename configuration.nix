@@ -3,13 +3,26 @@
 
 {
   # -----------------------------------------------------------
-  # BOOT
+  # BOOT (GRUB, UEFI mode, with os-prober for Windows + CachyOS)
   # -----------------------------------------------------------
-  boot.loader.systemd-boot = {
-    enable             = true;
-    configurationLimit = 20;             # keep more rollback generations
-    consoleMode        = "max";
+  boot.loader.systemd-boot.enable = false;
+
+  boot.loader.grub = {
+    enable                = true;
+    device                = "nodev";          # UEFI install — no BIOS target
+    efiSupport            = true;
+    efiInstallAsRemovable = true;             # writes \EFI\BOOT\BOOTX64.EFI,
+                                              # no NVRAM mutation needed
+    useOSProber           = true;             # picks up Windows + CachyOS
+    configurationLimit    = 20;
+    default               = "saved";          # remember last choice
+    gfxmodeEfi            = "auto";
+    extraConfig = ''
+      GRUB_SAVEDEFAULT=true
+      GRUB_TIMEOUT=5
+    '';
   };
+
   boot.loader.efi.canTouchEfiVariables = false;
 
   # CachyOS-tuned kernel is overkill here; zen is upstream and well-tested
