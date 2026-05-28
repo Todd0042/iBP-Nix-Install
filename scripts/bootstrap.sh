@@ -140,10 +140,21 @@ if [ "$AUTO" -eq 0 ]; then
 fi
 
 # -----------------------------------------------------------
-# FETCH REPO
+# REPO STAGING
 # -----------------------------------------------------------
-if [ ! -d "$WORKDIR/.git" ]; then
-    echo "Cloning $REPO_GIT → $WORKDIR"
+# Three modes:
+#   1. Custom ISO  →  /etc/iBP-Nix-Install/repo  exists (read-only).
+#                     Copy to /tmp so install-core.sh can write to it
+#                     (mounts.nix patching, hardware-configuration.nix).
+#   2. Already cloned (re-running bootstrap)  →  $WORKDIR exists.
+#   3. Vanilla NixOS ISO  →  git clone from GitHub.
+if [ -d /etc/iBP-Nix-Install/repo ]; then
+    echo "→ Using bundled repo from /etc/iBP-Nix-Install/repo"
+    rm -rf "$WORKDIR"
+    cp -r /etc/iBP-Nix-Install/repo "$WORKDIR"
+    chmod -R u+w "$WORKDIR"
+elif [ ! -d "$WORKDIR/.git" ] && [ ! -f "$WORKDIR/flake.nix" ]; then
+    echo "→ Cloning $REPO_GIT → $WORKDIR"
     git clone "$REPO_GIT" "$WORKDIR"
 fi
 cd "$WORKDIR"
