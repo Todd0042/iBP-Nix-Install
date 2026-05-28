@@ -25,6 +25,14 @@
 
   boot.loader.efi.canTouchEfiVariables = false;
 
+  # os-prober is needed on every grub-mkconfig run, not just the first.
+  # NixOS' grub module pulls it in when `useOSProber = true`, but we add
+  # it + ntfs3g to systemPackages so a `nixos-rebuild` invoked from any
+  # context (including failure-mode rescue) keeps Windows + CachyOS in
+  # the generated menu. boot.supportedFilesystems "ntfs" / "exfat" is
+  # already declared in mounts.nix — modules merge cleanly.
+  environment.systemPackages = with pkgs; [ os-prober ntfs3g ];
+
   # CachyOS-tuned kernel is overkill here; zen is upstream and well-tested
   # against NVIDIA out-of-tree. Falls back to latest stable if you'd rather:
   #   boot.kernelPackages = pkgs.linuxPackages_latest;

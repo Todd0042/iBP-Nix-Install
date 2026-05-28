@@ -140,6 +140,36 @@ if [ -n "$SIB_UUID" ]; then
 fi
 
 # -----------------------------------------------------------
+# OS-PROBER SANITY CHECK
+# -----------------------------------------------------------
+# We want grub's first config gen to find Windows + CachyOS. Run
+# os-prober here from the ISO so we surface a clear warning if it
+# DOESN'T see them, BEFORE the install commits a one-OS GRUB menu.
+echo "→ Running os-prober to verify Windows + CachyOS are detectable"
+if command -v os-prober >/dev/null; then
+    # os-prober requires writable /var/lib/os-prober — make sure it's there
+    mkdir -p /var/lib/os-prober
+    PROBE_OUT=$(os-prober 2>/dev/null || true)
+    if [ -n "$PROBE_OUT" ]; then
+        echo "   os-prober found:"
+        echo "$PROBE_OUT" | sed 's/^/     /'
+        WIN_FOUND=$(echo "$PROBE_OUT" | grep -ic windows || true)
+        LIN_FOUND=$(echo "$PROBE_OUT" | grep -ciE 'cachy|arch|gnu/linux' || true)
+        [ "$WIN_FOUND" -eq 0 ] && \
+            echo "   ⚠ WARNING: no Windows entry detected"
+        [ "$LIN_FOUND" -eq 0 ] && \
+            echo "   ⚠ WARNING: no sibling Linux (CachyOS) entry detected"
+    else
+        echo "   ⚠ WARNING: os-prober returned nothing."
+        echo "   GRUB menu will only show NixOS. You can fix later with:"
+        echo "     sudo nixos-rebuild boot --flake $REPO#$TARGET_DE"
+        echo "   (after confirming os-prober from the installed system works)"
+    fi
+else
+    echo "   ⚠ os-prober not on PATH — skipping pre-check."
+fi
+
+# -----------------------------------------------------------
 # INSTALL
 # -----------------------------------------------------------
 echo "→ Running nixos-install --flake .#${TARGET_DE}"
