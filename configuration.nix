@@ -31,7 +31,12 @@
   # context (including failure-mode rescue) keeps Windows + CachyOS in
   # the generated menu. boot.supportedFilesystems "ntfs" / "exfat" is
   # already declared in mounts.nix — modules merge cleanly.
-  environment.systemPackages = with pkgs; [ os-prober ntfs3g ];
+  #
+  # grub-customizer: GUI for inspecting / tweaking the running GRUB
+  # config. Note: any edits it makes are wiped on next nixos-rebuild,
+  # because NixOS regenerates grub.cfg from this file. Use it for
+  # inspection + temporary tweaks; persist via `boot.loader.grub.*`.
+  environment.systemPackages = with pkgs; [ os-prober ntfs3g grub-customizer ];
 
   # CachyOS-tuned kernel is overkill here; zen is upstream and well-tested
   # against NVIDIA out-of-tree. Falls back to latest stable if you'd rather:
@@ -157,7 +162,7 @@
     isNormalUser    = true;
     description     = "Todd McFinnighan";
     extraGroups     = [ "networkmanager" "wheel" "uinput" "gamemode" "video"
-                        "adbusers" "libvirtd" "kvm" "input" ];
+                        "adbusers" "libvirtd" "kvm" "input" "docker" ];
     # Default password on a fresh install. Change immediately with `passwd`.
     initialPassword = "meow";
   };
@@ -181,20 +186,59 @@
     nerd-fonts.ubuntu
     nerd-fonts.droid-sans-mono
     nerd-fonts.jetbrains-mono
+    nerd-fonts.meslo-lg              # ttf-meslo-nerd parity
     lexend
     jetbrains-mono
     noto-fonts
     noto-fonts-emoji
+    noto-fonts-cjk-sans              # CJK glyph coverage
+    noto-fonts-cjk-serif
+    liberation_ttf                   # ttf-liberation parity
+    dejavu_fonts                     # ttf-dejavu parity
+    cantarell-fonts
+    powerline-fonts                  # awesome-terminal-fonts parity
+    open-sans                        # ttf-opensans parity
   ];
 
   # -----------------------------------------------------------
   # PRINTING / BLUETOOTH / AVAHI
   # -----------------------------------------------------------
-  services.printing.enable      = true;
-  hardware.bluetooth.enable     = true;
-  services.avahi.enable         = true;
-  services.avahi.publish.enable = true;
+  services.printing = {
+    enable  = true;
+    drivers = with pkgs; [
+      hplip                            # HP LaserJet etc.
+      gutenprint                       # general PostScript drivers
+      gutenprintBin                    # vendor-licensed PPDs
+      foomatic-db                      # printer DB
+      foomatic-db-nonfree              # vendor-encumbered PPDs
+      foomatic-db-engine
+    ];
+    cups-pdf.enable = true;            # virtual "PDF" printer
+  };
+
+  hardware.bluetooth.enable           = true;
+  hardware.bluetooth.powerOnBoot      = true;
+
+  services.avahi.enable               = true;
+  services.avahi.publish.enable       = true;
   services.avahi.publish.userServices = true;
+  services.avahi.nssmdns4             = true;     # nss-mdns parity
+
+  # SSH (off by default in Arch installs; explicit here)
+  services.openssh = {
+    enable = true;
+    settings = {
+      PasswordAuthentication = true;
+      PermitRootLogin        = "no";
+    };
+  };
+
+  # Firmware updates (fwupd parity)
+  services.fwupd.enable = true;
+
+  # CPU governor / power-profile tooling (cpupower + power-profiles-daemon)
+  powerManagement.cpuFreqGovernor      = "performance";
+  services.power-profiles-daemon.enable = true;
 
   # -----------------------------------------------------------
   # SAMBA
@@ -253,6 +297,16 @@
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable   = true;
 
+  # Docker — user had docker + docker-compose explicitly installed
+  virtualisation.docker = {
+    enable = true;
+    autoPrune = {
+      enable = true;
+      dates  = "weekly";
+    };
+  };
+  # `docker` group added to user via extraGroups below.
+
   # -----------------------------------------------------------
   # ADB USB rules (matches your old setup)
   # -----------------------------------------------------------
@@ -279,15 +333,29 @@
     nix-output-monitor nvd
     htop btop nvtopPackages.full sysprof
     hardinfo2 lshw pciutils
-    vlc mpv ffmpeg yt-dlp parabolic freetube
+    vlc mpv ffmpeg ffmpegthumbnailer yt-dlp parabolic freetube haruna
     fastfetch
     wget curl
-    micro neovim vim
-    yazi xarchiver unzip p7zip
+    micro neovim vim nano
+    yazi xarchiver unzip p7zip unrar zip
     xclip wl-clipboard
     pika-backup
     systemd-bootchart
     wcalc bc pro-office-calculator
+
+    # extra CLI niceties from pacman list
+    pv                        # progress for pipes
+    glances                   # top-style monitor
+    duf                       # disk free / pretty df
+    plocate                   # locate(1) DB
+    rsync
+    smartmontools             # SMART disk health
+    usbutils                  # lsusb
+    bind                      # dig, nslookup
+    efitools                  # EFI key tools
+    libdvdcss                 # encrypted DVD support for vlc/mpv
+    piper-tts                 # text-to-speech
+    xsettingsd                # GTK theme sync under i3/sway
 
     # terminals (per-DE files don't need to redeclare)
     kitty foot xterm alacritty
@@ -308,7 +376,8 @@
     ventoy-full-qt
     goverlay mangohud vkbasalt ydotool
     wineWowPackages.stable winetricks
-    prismlauncher lutris protonplus
+    prismlauncher lutris protonplus heroic
+    ghidra                    # reverse engineering
     jdk8 jdk17 jdk21
 
     # icon / theme assets shared across all DEs

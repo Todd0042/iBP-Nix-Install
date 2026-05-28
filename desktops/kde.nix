@@ -46,6 +46,24 @@
     kdePackages.filelight
     kdePackages.plasma-systemmonitor
 
+    # extra KDE apps from pacman list
+    kdePackages.kate
+    kdePackages.kdeconnect-kde
+    kdePackages.kdegraphics-thumbnailers
+    kdePackages.ffmpegthumbs            # video file thumbnails in Dolphin
+    kdePackages.kdialog
+    kdePackages.kinfocenter
+    kdePackages.kscreen
+    kdePackages.kwalletmanager
+    kdePackages.spectacle               # screenshot tool
+    kdePackages.gwenview                # image viewer
+    kdePackages.bluedevil               # Bluetooth integration
+    kdePackages.plasma-thunderbolt
+    kdePackages.kde-gtk-config          # GTK theme integration
+    kdePackages.plasma-firewall
+    kdePackages.breeze-gtk              # GTK Breeze theme parity
+    kdePackages.phonon-vlc              # Phonon backend (was phonon-qt6-vlc)
+
     # plasma widgets / shell extras
     kdePackages.plasma-desktop
     kdePackages.plasma-nm
@@ -56,6 +74,14 @@
     kdePackages.plasma-integration
     kdePackages.plasma-browser-integration
     kdePackages.plasma-workspace-wallpapers
+
+    # GStreamer plugin stack — used by Plasma / Dolphin previews + Haruna
+    gst_all_1.gst-plugins-base
+    gst_all_1.gst-plugins-good
+    gst_all_1.gst-plugins-bad
+    gst_all_1.gst-plugins-ugly
+    gst_all_1.gst-libav
+    gst_all_1.gst-vaapi
 
     kdiff3
     libnotify
