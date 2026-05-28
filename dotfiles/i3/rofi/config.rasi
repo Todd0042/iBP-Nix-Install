@@ -1,0 +1,58 @@
+/* iBP rofi — Nord palette */
+
+configuration {
+    show-icons:        true;
+    icon-theme:        "Papirus";
+    drun-display-format: "{name}";
+    display-drun:      "Apps:";
+    display-window:    "Windows:";
+    display-run:       "Run:";
+    sidebar-mode:      false;
+    location:          0;
+    yoffset:           0;
+    xoffset:           0;
+    hide-scrollbar:    true;
+    fixed-num-lines:   true;
+    lines:             10;
+    columns:           1;
+    font:              "Ubuntu Sans Nerd Font 11";
+    show-match:        true;
+}
+
+* {
+    bg:       #2e3440ee;
+    bg-alt:   #3b4252;
+    fg:       #eceff4;
+    fg-alt:   #d8dee9;
+    accent:   #88c0d0;
+    selected: #5e81ac;
+    urgent:   #bf616a;
+
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+window {
+    transparency:     "real";
+    background-color: @bg;
+    border:           2px;
+    border-color:     @accent;
+    border-radius:    8px;
+    padding:          14px;
+    width:            520px;
+}
+
+mainbox      { children: [ inputbar, listview ]; spacing: 10px; }
+inputbar     {
+    children:    [ prompt, entry ];
+    padding:     6px 8px;
+    background-color: @bg-alt;
+    border-radius:  6px;
+}
+prompt       { text-color: @accent; padding: 0 6px 0 0; }
+entry        { placeholder: "type to search…"; placeholder-color: @fg-alt; }
+listview     { lines: 10; columns: 1; spacing: 4px; }
+element      { padding: 4px 8px; border-radius: 4px; }
+element selected { background-color: @selected; text-color: @fg; }
+element-icon { size: 22px; padding: 0 8px 0 0; background-color: transparent; }
+element-text { background-color: transparent; text-color: inherit; vertical-align: 0.5; }

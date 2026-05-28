@@ -1,0 +1,15 @@
+[22ba213d-98e5-4b51-a5d5-31e92fe066c7]
+Description=Window settings for firefox
+above=true
+aboverule=2
+layer=popup
+layerrule=2
+title=Picture-in-Picture
+titlematch=1
+types=1
+wmclass=firefox
+wmclassmatch=1
+
+[General]
+count=1
+rules=22ba213d-98e5-4b51-a5d5-31e92fe066c7

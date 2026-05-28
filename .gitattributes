@@ -1,0 +1,6 @@
+*.png  binary
+*.zst  binary
+*.fish text eol=lf
+*.conf text eol=lf
+*.sh   text eol=lf
+*.nix  text eol=lf

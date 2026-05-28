@@ -1,0 +1,124 @@
+// Waybar config — one bar per monitor.
+[
+  // ── Primary bar (DP-1) ──
+  {
+    "name": "primary",
+    "output": "DP-1",
+    "layer": "top",
+    "position": "top",
+    "height": 28,
+    "spacing": 4,
+    "modules-left": ["hyprland/workspaces", "hyprland/submap", "hyprland/window"],
+    "modules-center": ["clock"],
+    "modules-right": ["tray", "pulseaudio", "network", "cpu", "memory",
+                      "temperature", "custom/gpu", "custom/power"],
+
+    "hyprland/workspaces": {
+      "format": "{name}",
+      "on-click": "activate",
+      "all-outputs": false,
+      "sort-by-number": true
+    },
+
+    "hyprland/window": {
+      "format": "{title}",
+      "max-length": 80,
+      "separate-outputs": true
+    },
+
+    "clock": {
+      "format": "{:%a %b %d   %I:%M %p}",
+      "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+      "calendar": {
+        "mode": "month",
+        "weeks-pos": "right"
+      }
+    },
+
+    "tray": {
+      "icon-size": 18,
+      "spacing": 8
+    },
+
+    "pulseaudio": {
+      "format": "{volume}% {icon}",
+      "format-muted": "muted ",
+      "format-icons": { "default": ["", "", ""] },
+      "on-click": "pavucontrol"
+    },
+
+    "network": {
+      "format-wifi": "{essid} ({signalStrength}%) ",
+      "format-ethernet": "wired ",
+      "format-disconnected": "off ⚠",
+      "tooltip-format": "{ifname} via {gwaddr}",
+      "on-click": "nm-connection-editor"
+    },
+
+    "cpu":         { "format": "{usage}% " },
+    "memory":      { "format": "{used:0.1f}G " },
+    "temperature": {
+      "thermal-zone": 2,
+      "format": "{temperatureC}°C ",
+      "critical-threshold": 85
+    },
+
+    "custom/gpu": {
+      "format": "{}",
+      "exec": "nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader,nounits | awk -F', ' '{printf \"%d%% GPU  %dM\", $1, $2}'",
+      "interval": 3,
+      "tooltip": false
+    },
+
+    "custom/power": {
+      "format": "⏻",
+      "tooltip": false,
+      "on-click": "wofi --show drun -- powermenu"
+    }
+  },
+
+  // ── Left monitor (DP-3) — minimal ──
+  {
+    "name": "left",
+    "output": "DP-3",
+    "layer": "top",
+    "position": "top",
+    "height": 26,
+    "modules-left": ["hyprland/workspaces"],
+    "modules-center": ["hyprland/window"],
+    "modules-right": ["clock"],
+    "hyprland/workspaces": { "sort-by-number": true },
+    "hyprland/window": { "format": "{title}", "max-length": 50 },
+    "clock": { "format": "{:%I:%M %p}" }
+  },
+
+  // ── Right monitor (DP-2) — minimal ──
+  {
+    "name": "right",
+    "output": "DP-2",
+    "layer": "top",
+    "position": "top",
+    "height": 26,
+    "modules-left": ["hyprland/workspaces"],
+    "modules-center": ["hyprland/window"],
+    "modules-right": ["clock"],
+    "hyprland/workspaces": { "sort-by-number": true },
+    "hyprland/window": { "format": "{title}", "max-length": 50 },
+    "clock": { "format": "{:%I:%M %p}" }
+  },
+
+  // ── Bottom monitor (HDMI-A-1) — minimal ──
+  {
+    "name": "bottom",
+    "output": "HDMI-A-1",
+    "layer": "top",
+    "position": "top",
+    "height": 26,
+    "modules-left": ["hyprland/workspaces"],
+    "modules-center": ["hyprland/window"],
+    "modules-right": ["clock"],
+    "hyprland/workspaces": { "sort-by-number": true },
+    "hyprland/window": { "format": "{title}", "max-length": 50 },
+    "clock": { "format": "{:%I:%M %p}" }
+  }
+]

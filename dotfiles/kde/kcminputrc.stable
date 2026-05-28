@@ -1,0 +1,6 @@
+[Libinput][2362][14340][PIXA3804:01 093A:3804 Touchpad]
+DisableEventsOnExternalMouse=true
+
+[Mouse]
+cursorSize=48
+cursorTheme=Nordzy-catppuccin-frappe-dark
